@@ -1,0 +1,112 @@
+require(cdcfluview); require(maps); require(stringr)
+setwd("~/Google Drive/Influenza/17-18_forecast/HumNat")
+list.files()
+baseline <- read.csv("wILI_Baseline.csv",stringsAsFactors = F)
+setwd("~/Google Drive/Influenza/17-18_forecast/HumNat/RawResults")
+submission_date <- seq(as.Date("2017-11-06"),as.Date("2018-05-14"),7)
+report=2
+load(list.files()[grep(submission_date[report],list.files())][2])
+load(list.files()[grep(submission_date[report],list.files())][1])
+
+#plot 1
+states <- map("state", plot = F)
+unit_names <- states$names
+unit_names <- gsub("\\:.*","",unit_names)
+hhs <- cdcfluview::hhs_regions
+unit_region <- data.frame(hhs_region = hhs$region_number[sapply(1:length(unit_names), function(y) which(toupper(unit_names[y])==toupper(hhs$state_or_territory)))])
+col_gradient <- rbind(cbind(round(seq(0,1,length.out=101),2),colorRampPalette(c('blue', 'white'))(101))[1:100,],
+                      cbind(round(seq(1,7,length.out=601),2),colorRampPalette(c('white', 'red'))(601)))
+today <- get_flu_data("hhs",1:10,"ilinet",2017)
+cur.week <- max(today$WEEK)
+today <- round(today[today$WEEK==max(today$WEEK),5]/baseline[2:11,13],2)
+tomo <- data.frame(round(sapply(1:10,function(h) mean(as.numeric(sim_res_all[[h]][1,])))/baseline[2:11,13],2))
+unit_region["wILI_today"] <- sapply(1:nrow(unit_region), function(x) today[unit_region$hhs_region[x],1])
+unit_region["col_today"] <- sapply(1:nrow(unit_region), function(x) col_gradient[which(as.numeric(col_gradient[,1])==unit_region$wILI_today[x]),2])
+unit_region["wILI_tomo"] <-  sapply(1:nrow(unit_region), function(x) tomo[unit_region$hhs_region[x],1])
+unit_region["col_tomo"] <- sapply(1:nrow(unit_region), function(x) col_gradient[which(as.numeric(col_gradient[,1])==unit_region$wILI_tomo[x]),2])
+
+jpeg(paste("Report",report,"_tmap.jpeg",sep=""),width = 918, height = 600)
+map("state",fill=T,col=unit_region$col_today,myborder = c(0.1,0.1))
+legend('top', pch = 15, col = col_gradient[seq(0,700,50)+1,2], legend = as.numeric(col_gradient[seq(0,700,50)+1,1]), cex = 1, bty = 'n',title="Relative wILI%",horiz =T)
+mtext(side=3,paste('Observation - Week', cur.week),cex=2)
+dev.off()
+
+jpeg(paste("Report",report,"_t+1map.jpeg",sep=""),width = 918, height = 600)
+map("state",fill=T,col=unit_region$col_tomo,myborder = c(0.1,0.1))
+legend('top', pch = 15, col = col_gradient[seq(0,700,50)+1,2], legend = as.numeric(col_gradient[seq(0,700,50)+1,1]), cex = 1, bty = 'n',title="Relative wILI%",horiz=T)
+mtext(side=3,paste('Forecast - Week', cur.week+1),cex=2)
+dev.off()
+
+#plot2, HHS
+
+#setwd("~/Google Drive/Influenza/17-18_forecast/HumNat/html")
+setwd("/Users/Yang/GitHub/1718flu")
+for(h in 1:10){
+  today <- get_flu_data("hhs",h,"ilinet",2017)
+  onset_sim <- peaksize_sim <- peaktime_sim <- rep(NA,ncol(sim_res_all[[h]]))
+  for(i in 1:length(onset_sim)){
+    ILI_temp <- c(today$`% WEIGHTED ILI`,sim_res_all[[h]][,i])
+    above_bl <- (intersect(intersect(which(ILI_temp>baseline[h+1,13]),which(ILI_temp>baseline[h+1,13])+1),which(ILI_temp>baseline[h+1,13])+2)-2)
+    if (length(above_bl)!=0)  {onset_sim[i] <- min(above_bl)} else {onset_sim[i] <- NA}
+    peaksize_sim[i] <- max(ILI_temp)
+    peaktime_sim[i] <- which.max(ILI_temp)
+  }
+  
+  jpeg(paste("Report",report,"_HHS",h,'.jpeg',sep=""),width=918,height=880)
+  layout(matrix(c(rep(1,8),2),nrow=9))
+  par(mar=c(1,5.1,2.4,2.1))
+  plot(0,ylim=c(0,10),xlim=c(1,52),ylab="wILI%",xlab="Week",xaxt='n',col='white',main=paste("HumNat ENVR - HHS Region",h),cex.main=2)
+  for(yr in 1997:2016) lines(get_flu_data("hhs",h,"ilinet",years=yr)$`% WEIGHTED ILI`,col="grey90",lwd=2)
+  points(y=today$`% WEIGHTED ILI`,x=1:(cur.week-40+1),pch=19,col="grey50")
+  lines(y=today$`% WEIGHTED ILI`,x=1:(cur.week-40+1),col="grey50",lwd=3)
+  lines(y=c(tail(today$`% WEIGHTED ILI`,1),rowMeans(sim_res_all[[h]])[1:4]),x=(cur.week-40+1):(cur.week-40+5),col="#FF69B4",lwd=2)
+  points(y=rowMeans(sim_res_all[[h]])[1:4],x= (cur.week-40+2):(cur.week-40+5), col=	"#FF69B4",pch=21,bg="white")
+  abline(v=(cur.week-40+3),lty=2)
+  abline(h=baseline[h+1,13],lty=2)
+  points(y=mean(peaksize_sim),x=mean(peaktime_sim),pch=19,col="#FF69B4")
+  lines(y=rep(mean(peaksize_sim),2),x=quantile(peaktime_sim,c(0.25,0.75)),col="#FF69B4",lty=2,lwd=2)
+  lines(y=c(mean(peaksize_sim)+0.15,mean(peaksize_sim)-0.15),x=rep(quantile(peaktime_sim,c(0.25)),2),col="#FF69B4",lwd=2)
+  lines(y=c(mean(peaksize_sim)+0.15,mean(peaksize_sim)-0.15),x=rep(quantile(peaktime_sim,c(0.75)),2),col="#FF69B4",lwd=2)
+  lines(x=rep(mean(peaktime_sim),2),y=quantile(peaksize_sim,c(0.25,0.75)),col="#FF69B4",lty=2,lwd=2)
+  lines(y=rep(quantile(peaksize_sim,c(0.25)),2),x=c(mean(peaktime_sim)+0.3,mean(peaktime_sim)-0.3),col="#FF69B4",lwd=2)      
+  lines(y=rep(quantile(peaksize_sim,c(0.75)),2),x=c(mean(peaktime_sim)+0.3,mean(peaktime_sim)-0.3),col="#FF69B4",lwd=2)  
+  
+  par(mar=c(5.1,5.1,0,2.1))
+  plot(x=mean(onset_sim,na.rm=T),xlim=c(1,52),y=1,xaxt='n',yaxt="n",ylab="",xlab="Week",pch=19, col="#FF69B4")
+  axis(1,at=1:52,labels=c(40:52,1:39))
+  lines(x=quantile(onset_sim,na.rm=T,c(0.25,0.75)),y=rep(1,2),col="#FF69B4",lty=2,lwd=2)
+  lines(x=rep(quantile(onset_sim,na.rm=T,c(0.25)),2),y=c(1-0.1,1+0.1),col="#FF69B4",lwd=2)
+  lines(x=rep(quantile(onset_sim,na.rm=T,c(0.75)),2),y=c(1-0.1,1+0.1),col="#FF69B4",lwd=2)
+  mtext(expression("Onset\nWeek"),side=2,las=1,line=1,cex=0.75,padj=1)
+  dev.off()
+}
+
+#plot2, national
+today <- get_flu_data("national",,"ilinet",2017)
+jpeg(paste("Report",report,"_national.jpeg",sep=""),width=918,height=880)
+layout(matrix(c(rep(1,9),2),nrow=10))
+par(mar=c(1,5.1,2.4,2.1))
+plot(0,ylim=c(0,10),xlim=c(1,52),ylab="wILI%",xlab="Week",xaxt='n',col='white',main=paste("HumNat ENVR - National"),cex.main=2,cex.lab=2)
+for(yr in 1997:2016) lines(get_flu_data("national",,"ilinet",years=yr)$`% WEIGHTED ILI`,col="grey90",lwd=2)
+points(y=today$`% WEIGHTED ILI`,x=1:(cur.week-40+1),pch=19,col="grey50",)
+lines(y=today$`% WEIGHTED ILI`,x=1:(cur.week-40+1),col="grey50",lwd=3)
+lines(y=c(tail(today$`% WEIGHTED ILI`,1),rowMeans(sim_res_national)[1:4]),x=(cur.week-40+1):(cur.week-40+5),col="#FF69B4",lwd=2)
+points(y=rowMeans(sim_res_national)[1:4],x= (cur.week-40+2):(cur.week-40+5), col=	"#FF69B4",pch=21,bg="white")
+abline(v=(cur.week-40+3),lty=2)
+abline(h=baseline[1,13],lty=2)
+points(y=mean(peaksize),x=mean(peaktime),pch=19,col="#FF69B4")
+lines(y=rep(mean(peaksize),2),x=quantile(peaktime,c(0.25,0.75)),col="#FF69B4",lty=2,lwd=2)
+lines(y=c(mean(peaksize)+0.15,mean(peaksize)-0.15),x=rep(quantile(peaktime,c(0.25)),2),col="#FF69B4",lwd=2)
+lines(y=c(mean(peaksize)+0.15,mean(peaksize)-0.15),x=rep(quantile(peaktime,c(0.75)),2),col="#FF69B4",lwd=2)
+lines(x=rep(mean(peaktime),2),y=quantile(peaksize,c(0.25,0.75)),col="#FF69B4",lty=2,lwd=2)
+lines(y=rep(quantile(peaksize,c(0.25)),2),x=c(mean(peaktime)+0.3,mean(peaktime)-0.3),col="#FF69B4",lwd=2)      
+lines(y=rep(quantile(peaksize,c(0.75)),2),x=c(mean(peaktime)+0.3,mean(peaktime)-0.3),col="#FF69B4",lwd=2)  
+
+par(mar=c(5.1,5.1,0,2.1))
+plot(x=mean(onsettime,na.rm=T),xlim=c(1,52),y=1,xaxt='n',yaxt="n",ylab="",xlab="Week",pch=19, col="#FF69B4",cex.lab=2)
+axis(1,at=1:52,labels=c(40:52,1:39))
+lines(x=quantile(onsettime,na.rm=T,c(0.25,0.75)),y=rep(1,2),col="#FF69B4",lty=2,lwd=2)
+lines(x=rep(quantile(onsettime,na.rm=T,c(0.25)),2),y=c(1-0.1,1+0.1),col="#FF69B4",lwd=2)
+lines(x=rep(quantile(onsettime,na.rm=T,c(0.75)),2),y=c(1-0.1,1+0.1),col="#FF69B4",lwd=2)
+mtext(expression("Onset\nWeek"),side=2,las=1,line=1,cex=0.75,padj=1)
+dev.off()
