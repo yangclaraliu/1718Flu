@@ -3,9 +3,12 @@ setwd("~/Google Drive/Influenza/17-18_forecast/HumNat")
 list.files()
 baseline <- read.csv("wILI_Baseline.csv",stringsAsFactors = F)
 setwd("~/Google Drive/Influenza/17-18_forecast/HumNat/RawResults")
+list.files()
 submission_date <- seq(as.Date("2017-11-06"),as.Date("2018-05-14"),7)
-report=2
+report=3
+list.files()[grep(submission_date[report],list.files())][2]
 load(list.files()[grep(submission_date[report],list.files())][2])
+list.files()[grep(submission_date[report],list.files())][1]
 load(list.files()[grep(submission_date[report],list.files())][1])
 
 #plot 1
@@ -25,6 +28,8 @@ unit_region["col_today"] <- sapply(1:nrow(unit_region), function(x) col_gradient
 unit_region["wILI_tomo"] <-  sapply(1:nrow(unit_region), function(x) tomo[unit_region$hhs_region[x],1])
 unit_region["col_tomo"] <- sapply(1:nrow(unit_region), function(x) col_gradient[which(as.numeric(col_gradient[,1])==unit_region$wILI_tomo[x]),2])
 
+paste("~/Github/1718Flu/WP_plots/",paste("Report",report,sep=""),sep="")
+setwd(paste("~/Github/1718Flu/WP_plots/",paste("Report",report,sep=""),sep=""))
 jpeg(paste("Report",report,"_tmap.jpeg",sep=""),width = 918, height = 600)
 map("state",fill=T,col=unit_region$col_today,myborder = c(0.1,0.1))
 legend('top', pch = 15, col = col_gradient[seq(0,700,50)+1,2], legend = as.numeric(col_gradient[seq(0,700,50)+1,1]), cex = 1, bty = 'n',title="Relative wILI%",horiz =T)
@@ -38,9 +43,9 @@ mtext(side=3,paste('Forecast - Week', cur.week+1),cex=2)
 dev.off()
 
 #plot2, HHS
-
 #setwd("~/Google Drive/Influenza/17-18_forecast/HumNat/html")
-setwd("/Users/Yang/GitHub/1718flu")
+#setwd("/Users/Yang/GitHub/1718flu")
+paste("~/Github/1718Flu/WP_plots/",paste("Report",report,sep=""),sep="")
 for(h in 1:10){
   today <- get_flu_data("hhs",h,"ilinet",2017)
   onset_sim <- peaksize_sim <- peaktime_sim <- rep(NA,ncol(sim_res_all[[h]]))
