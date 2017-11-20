@@ -1,0 +1,37 @@
+---
+title: "README"
+author: "Yang Liu"
+date: "November 20, 2017"
+output: html_document
+---
+### When MERRA-2 contains update
+1. **update_environmental_v2.R**  
+  Input = .nc files  
+  Output = record**x**.RData that contains things like **TS_min**
+2. **dailyweekly_conversion_v2.R**  
+  Input = record**x**.RData that contains things like **TS_min**  
+  Output = weekly_environment**x**.RData
+3. **timealign_v2.R**  
+  Input = weekly_environment**x**.RData
+  Output = HHS_timealign**x**.RData
+4. **model_selected_v2.R**  
+  Input = Lags.R, HS_timealign**x**.RData  
+  Output = Model_HHS**x**.RData, lags_HHS**x**.RData
+5. **fore_tab_base_v2.R**  
+  Input = HHS_timalign**x**.RData  
+  Output = fore_tab_base_all_EW**a**_EN**b**.RData  
+  **a** - the latest week of available public health data  
+  **b** - the latest week of available environmental data
+6. **fore_tab_v1.R**  
+  Input = lags.R, lags_HHS**x**.RData, fore_tab_base_all_EW**a**_EN**b**.RData  
+  Output = fore_tab_all_EW**a**_EN*b*.RData  
+  **a** - the latest week of available public health data  
+  **b** - the latest week of available environmental data
+7. **runModel.R**  
+  Input =  fore_tab_all_EW**a**_EN*b*.RData, baseline, submission_date, report  
+  Output = ENVR_RawResult_**Submission_Date**
+8. **WirteTableHHS.R**  
+  Input = draw.wk.sim.R, draw.onsettime.sim.R, draw.peakweek.sim.R, draw.peakweek.sim.R, baseline, submission, submission_date, report, fore_tab_all_EW**a**_EN*b*.RData  
+  Output = EW**x**-HumNat-date.csv
+9. **WriteTableNational_v2.R**  
+  Input = draw.wk.sim.R, draw.onsettime.sim.R, draw.peakweek.sim.R, draw.peakweek.sim.R,    baseline, submission, submission_date, report, fore_tab_all_EW**a**_EN*b*.RData, local_to_national_model.RData 

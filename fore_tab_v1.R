@@ -14,7 +14,7 @@ source("lags.R")
 #load("~/Google Drive/Influenza/16-17_forecast/Environmental_Regression/lags_HHS.RData")
 
 #Gai
-load("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/HumNat/lags_HHS7.RData")
+load("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/HumNat/lags_HHS8.RData")
 
 #load("~/Google Drive/Influenza/16-17_forecast/Environmental_Regression/model_HHS.RData")
 
@@ -56,10 +56,5 @@ for(h in 1:10) {fore_tab_all[[h]] <- draw.fore.tab(h)}
 
 #setwd("~/Google Drive/Influenza/16-17_forecast/Environmental_Regression/fore_tab_all")
 setwd("C:/Users/liux3204//Google Drive/Influenza/17-18_forecast/HumNat/fore_tab_all")
-
-#
-#base <- get_flu_data("national",,"ilinet",c(2002:2016))
-
-#file_name <- paste("fore_tab_all_EW",tail(base$WEEK,1),"_EN44.RData",sep="")
 file_name <- gsub("base_","",record_list[mark])
 save(fore_tab_all,file=file_name)

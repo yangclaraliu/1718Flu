@@ -1,7 +1,7 @@
 require(dlnm);require(splines);require(infotheo);require(cdcfluview)
 setwd("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/HumNat")
 record_list <- list.files(pattern=glob2rx("HHS_timealign*RData"))
-
+record_list[length(record_list)]
 load(record_list[length(record_list)])
 #load("C:/Users/liux3204/Google Drive/Influenza/16-17_forecast/HHS_timealign1.RData")
 #load("tot_inc.RData")
@@ -75,6 +75,8 @@ for(h in 1:10){fore_tab_base_all[[h]] <- draw.fore.tab.base(h)}
 #setwd("~/Google Drive/Influenza/16-17_forecast/Environmental_Regression/fore_tab_base_all")
 setwd("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/HumNat/fore_tab_base_all")
 #fill in
-file_name <- paste("fore_tab_base_all_EW",tail(base$WEEK,1),"_EN39.RData",sep="")#the output file is named as data availability
+#Gai
+file_name <- paste("fore_tab_base_all_EW",tail(base$WEEK,1),"_EN44.RData",sep="")#the output file is named as data availability
 #file_name <- paste("fore_tab_base_all_EW",tail(tot_inc$wk,1),"_EN44.RData",sep="")
+file_name
 save(fore_tab_base_all,file=file_name)

@@ -1,8 +1,9 @@
 require(dlnm);require(splines);require(infotheo);require(usdm); require(randomForest);require(zoo)
 #load("~/Google Drive/Influenza/16-17_forecast/HHS_timealign3.RData")
-load("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/HHS_timealign8.RData")
-source("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/lags.R")
 setwd("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/HumNat")
+source("lags.R")
+list.files(pattern="HHS_timealign")[which.max(gsub(".RData","",gsub("HHS_timealign","",list.files(pattern="HHS_timealign"))))]
+load(list.files(pattern="HHS_timealign")[which.max(gsub(".RData","",gsub("HHS_timealign","",list.files(pattern="HHS_timealign"))))])
 
 model_HHS <- list()
 lags_HHS <- list()
@@ -14,9 +15,9 @@ for(h in 1:10){
   HHS_flu["season"]<-NA;for(i in 1:length(start)){HHS_flu$season[start[i]:end[i]]<-i}
   HHS_flu <- HHS_flu[HHS_flu$season>=6 & HHS_flu$season <=21,]#missing data in the first five years
   HHS_flu[HHS_flu$ILIp==0,"ILIp"] <- NA
-  # MI_Tmean <- rep(NA,52); for(i in 1:52) {MI_Tmean[i] <- mutinformation(discretize(HHS_flu$ILIp)$X,lags(discretize(HHS_flu$wm_TS_mean)$X,i))}
-  # plot(MI_Tmean)
-  # which.max(MI_Tmean)
+  MI_Tmean <- rep(NA,52); for(i in 1:52) {MI_Tmean[i] <- mutinformation(discretize(HHS_flu$ILIp)$X,lags(discretize(HHS_flu$wm_TS_mean)$X,i))}
+  plot(MI_Tmean)
+  which.max(MI_Tmean)
   # 
   # MI_ILI <- rep(NA,104);for(i in 3:104) {MI_ILI[i] <- mutinformation(discretize(HHS_flu$ILIp)$X,lags(discretize(HHS_flu$ILIp)$X,i))}
   # plot(MI_ILI)
@@ -66,5 +67,5 @@ for(h in 1:10){
   lags_HHS[[h]] <- list(Ivar,Tvar,Hvar,TVvar,HVvar)
 }
 
-save(model_HHS, file="Model_HHS7.RData")
-save(lags_HHS, file="lags_HHS7.RData")
+save(model_HHS, file="Model_HHS8.RData")
+save(lags_HHS, file="lags_HHS8.RData")
