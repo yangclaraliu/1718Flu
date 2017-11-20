@@ -145,17 +145,18 @@ Output = fore_tab_base_all_EW<strong>a</strong>_EN<strong>b</strong>.RData<br />
 <strong>b</strong> - the latest week of available environmental data</li>
 <li><strong>fore_tab_v1.R</strong><br />
 Input = lags.R, lags_HHS<strong>x</strong>.RData, fore_tab_base_all_EW<strong>a</strong>_EN<strong>b</strong>.RData<br />
-Output = fore_tab_all_EW<strong>a</strong>_EN<em>b</em>.RData<br />
+Output = fore_tab_all_EW<strong>a</strong>_EN<strong>b</strong>.RData<br />
 <strong>a</strong> - the latest week of available public health data<br />
 <strong>b</strong> - the latest week of available environmental data</li>
 <li><strong>runModel.R</strong><br />
-Input = fore_tab_all_EW<strong>a</strong><em>EN<em>b</em>.RData, baseline, submission_date, report<br />
+Input = fore_tab_all_EW<strong>a</strong><em>EN<strong>b</strong>.RData, baseline, submission_date, report<br />
 Output = ENVR_RawResult</em><strong>Submission_Date</strong></li>
 <li><strong>WirteTableHHS.R</strong><br />
-Input = draw.wk.sim.R, draw.onsettime.sim.R, draw.peakweek.sim.R, draw.peakweek.sim.R, baseline, submission, submission_date, report, fore_tab_all_EW<strong>a</strong>_EN<em>b</em>.RData<br />
+Input = draw.wk.sim.R, draw.onsettime.sim.R, draw.peakweek.sim.R, draw.peakweek.sim.R, baseline, submission, submission_date, report, fore_tab_all_EW<strong>a</strong>_EN<strong>b</strong>.RData<br />
 Output = EW<strong>x</strong>-HumNat-date.csv</li>
 <li><strong>WriteTableNational_v2.R</strong><br />
-Input = draw.wk.sim.R, draw.onsettime.sim.R, draw.peakweek.sim.R, draw.peakweek.sim.R, baseline, submission, submission_date, report, fore_tab_all_EW<strong>a</strong>_EN<em>b</em>.RData, local_to_national_model.RData</li>
+Input = draw.wk.sim.R, draw.onsettime.sim.R, draw.peakweek.sim.R, draw.peakweek.sim.R, baseline, submission, submission_date, report, fore_tab_all_EW<strong>a</strong>_EN<strong>b</strong>.RData, local_to_national_model.RData<br />
+Output = submission</li>
 </ol>
 </div>
 
