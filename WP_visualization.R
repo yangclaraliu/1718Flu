@@ -5,7 +5,7 @@ baseline <- read.csv("wILI_Baseline.csv",stringsAsFactors = F)
 setwd("~/Google Drive/Influenza/17-18_forecast/HumNat/RawResults")
 list.files()
 submission_date <- seq(as.Date("2017-11-06"),as.Date("2018-05-14"),7)
-report=3
+report=4
 list.files()[grep(submission_date[report],list.files())][2]
 load(list.files()[grep(submission_date[report],list.files())][2])
 list.files()[grep(submission_date[report],list.files())][1]
