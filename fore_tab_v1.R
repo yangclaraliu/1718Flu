@@ -58,3 +58,5 @@ for(h in 1:10) {fore_tab_all[[h]] <- draw.fore.tab(h)}
 setwd("C:/Users/liux3204//Google Drive/Influenza/17-18_forecast/HumNat/fore_tab_all")
 file_name <- gsub("base_","",record_list[mark])
 save(fore_tab_all,file=file_name)
+setwd("C:/Users/liux3204/Documents/GitHub/1718Flu/fore_tab_all")
+save(fore_tab_all,file=file_name)

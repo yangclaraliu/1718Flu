@@ -21,18 +21,25 @@ output: html_document
   Input = HHS_timalign**x**.RData  
   Output = fore_tab_base_all_EW**a**_EN**b**.RData  
   **a** - the latest week of available public health data  
-  **b** - the latest week of available environmental data
+  **b** - the latest week of available environmental data  
+  This document does not save to Github, only locally.
 6. **fore_tab_v1.R**  
   Input = lags.R, lags_HHS**x**.RData, fore_tab_base_all_EW**a**_EN**b**.RData  
   Output = fore_tab_all_EW**a**_EN**b**.RData  
   **a** - the latest week of available public health data  
-  **b** - the latest week of available environmental data
+  **b** - the latest week of available environmental data  
+  This document saves both locally and to GitHub.
 7. **runModel.R**  
   Input =  fore_tab_all_EW**a**_EN**b**.RData, baseline, submission_date, report  
-  Output = ENVR_RawResult_**Submission_Date**
+  Output = ENVR_RawResult_**Submission_Date**  
+  This document saves both locally and to GitHub.
 8. **WirteTableHHS.R**  
   Input = draw.wk.sim.R, draw.onsettime.sim.R, draw.peakweek.sim.R, draw.peakweek.sim.R, baseline, submission, submission_date, report, fore_tab_all_EW**a**_EN**b**.RData  
-  Output = EW**x**-HumNat-date.csv
+  Output = EW**x**-HumNat-date.csv  
+  This document saves both locally and to GitHub.
 9. **WriteTableNational_v2.R**  
   Input = draw.wk.sim.R, draw.onsettime.sim.R, draw.peakweek.sim.R, draw.peakweek.sim.R,    baseline, submission, submission_date, report, fore_tab_all_EW**a**_EN**b**.RData, local_to_national_model.RData  
-  Output = submission
+  Output = submission  
+  This document saves both locally and to GitHub.
+### When MERRA-2 does not update
+Step 5-9 only.
