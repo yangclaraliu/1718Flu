@@ -14,7 +14,7 @@ source("lags.R")
 #load("~/Google Drive/Influenza/16-17_forecast/Environmental_Regression/lags_HHS.RData")
 
 #Gai
-load("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/HumNat/lags_HHS8.RData")
+load("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/HumNat/lags_HHS9.RData")
 
 #load("~/Google Drive/Influenza/16-17_forecast/Environmental_Regression/model_HHS.RData")
 

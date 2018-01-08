@@ -1,3 +1,4 @@
+
 require(dlnm);require(splines);require(infotheo);require(cdcfluview)
 setwd("C:/Users/liux3204/Google Drive/Influenza/17-18_forecast/HumNat")
 record_list <- list.files(pattern=glob2rx("HHS_timealign*RData"))
